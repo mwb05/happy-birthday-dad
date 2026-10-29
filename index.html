@@ -14,48 +14,93 @@
 </head>
 <body class="locked">
 
-<!-- The DB11, drawn once and reused: on the card, on the road, and on the map. -->
+<!-- The DB11, drawn once and reused: on the card, on the road, and on the map.
+     Side profile, nose to the right. Proportions from the real car (4739 mm long,
+     2805 mm wheelbase, 1279 mm tall, 20-inch wheels) at 0.0954 px per mm. -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
     <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#2a3350"/>
-      <stop offset="0.45" stop-color="#141a2c"/>
-      <stop offset="1" stop-color="#0a0d16"/>
+      <stop offset="0" stop-color="#3a4668"/>
+      <stop offset="0.28" stop-color="#1c2440"/>
+      <stop offset="0.62" stop-color="#121a30"/>
+      <stop offset="1" stop-color="#090c16"/>
     </linearGradient>
     <linearGradient id="glassGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#6a7797" stop-opacity="0.75"/>
-      <stop offset="1" stop-color="#1b2236" stop-opacity="0.9"/>
+      <stop offset="0" stop-color="#8a98b8" stop-opacity="0.8"/>
+      <stop offset="0.5" stop-color="#2c3650" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#141a2c" stop-opacity="1"/>
     </linearGradient>
-    <radialGradient id="lampGrad" cx="50%" cy="50%" r="50%">
-      <stop offset="0" stop-color="#fff8e1"/>
-      <stop offset="1" stop-color="#f3dc9a" stop-opacity="0.2"/>
+    <linearGradient id="reflGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="0.45" stop-color="#ffffff" stop-opacity="0.09"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="lampGrad" cx="80%" cy="50%" r="70%">
+      <stop offset="0" stop-color="#fffaf0"/>
+      <stop offset="0.5" stop-color="#f3dc9a" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#d8b25a" stop-opacity="0.25"/>
     </radialGradient>
+    <radialGradient id="rimGrad" cx="40%" cy="38%" r="70%">
+      <stop offset="0" stop-color="#2a2f3b"/>
+      <stop offset="1" stop-color="#0e1118"/>
+    </radialGradient>
+    <!-- one Y-spoke; the rim uses ten of them -->
+    <path id="spk" d="M-1.6,-5 L-4.4,-21.6 L-1.5,-21.6 L0,-14.5 L1.5,-21.6 L4.4,-21.6 L1.6,-5 Z" fill="#59606f"/>
+    <g id="spokes">
+      <use href="#spk"/><use href="#spk" transform="rotate(36)"/><use href="#spk" transform="rotate(72)"/>
+      <use href="#spk" transform="rotate(108)"/><use href="#spk" transform="rotate(144)"/><use href="#spk" transform="rotate(180)"/>
+      <use href="#spk" transform="rotate(216)"/><use href="#spk" transform="rotate(252)"/><use href="#spk" transform="rotate(288)"/>
+      <use href="#spk" transform="rotate(324)"/>
+    </g>
     <symbol id="db11" viewBox="0 0 480 150">
-      <g class="shadow"><ellipse cx="240" cy="134" rx="215" ry="7" fill="rgba(0,0,0,0.55)"/></g>
-      <path class="body" fill="url(#bodyGrad)" stroke="rgba(216,178,90,0.35)" stroke-width="1"
-        d="M28,118 C24,108 26,96 36,90 C44,86 60,84 80,80 C100,74 118,62 150,52 C180,42 215,40 250,40 C280,40 300,46 330,60 C360,66 400,72 430,82 C448,88 456,98 452,112 C450,118 440,122 420,122 L410,122 A38,38 0 0 0 334,122 L148,122 A38,38 0 0 0 72,122 L40,122 C32,122 28,120 28,118 Z"/>
-      <path class="glass" fill="url(#glassGrad)" d="M156,58 C185,48 225,46 250,46 C278,46 298,52 322,63 L296,68 C262,60 220,60 176,66 Z"/>
-      <path class="pillar" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1.5" d="M244,47 L246,66"/>
-      <path class="shoulder" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="1.2" d="M60,88 C160,76 300,72 440,86"/>
-      <path class="sill" fill="none" stroke="rgba(216,178,90,0.28)" stroke-width="1" d="M150,116 L334,116"/>
-      <path class="lamp" fill="url(#lampGrad)" d="M418,84 C436,86 446,92 448,101 L430,99 C428,92 424,88 418,84 Z"/>
-      <path class="tail" fill="#b23a3a" opacity="0.8" d="M33,97 L45,95 L45,103 L33,105 Z"/>
-      <g class="wheel" style="transform-origin:110px 118px">
-        <circle cx="110" cy="118" r="30" fill="#0a0b0f" stroke="#1f232c" stroke-width="2"/>
-        <circle cx="110" cy="118" r="18" fill="#1b1e26" stroke="#5b5f6b" stroke-width="2"/>
-        <circle cx="110" cy="118" r="4" fill="#4a4e5a"/>
-        <g stroke="#5b5f6b" stroke-width="2.4" stroke-linecap="round">
-          <path d="M110,118 L110,102"/><path d="M110,118 L125,113"/><path d="M110,118 L119,131"/><path d="M110,118 L101,131"/><path d="M110,118 L95,113"/>
-        </g>
+      <g class="shadow"><ellipse cx="243" cy="146" rx="222" ry="5" fill="rgba(0,0,0,0.6)"/></g>
+      <!-- body: rear bumper, tail, deck, fastback glass, roof, windscreen, long bonnet, nose, splitter, sills with the wheel arches -->
+      <path class="body" fill="url(#bodyGrad)" stroke="rgba(216,178,90,0.38)" stroke-width="0.9" stroke-linejoin="round"
+        d="M30,124 C22,114 19,96 21,78 C22,68 24,60 30,55 C44,52 72,53 102,55 C118,50 138,40 160,33 C180,28 205,27 230,29 C250,31 270,46 292,62 C340,66 410,72 452,80 C460,81 467,86 470,94 C474,104 474,118 470,128 C468,133 464,136 452,137 L417.7,137 A40,40 0 1 0 352.3,137 L149.7,137 A40,40 0 1 0 84.3,137 L56,137 C46,137 36,132 30,124 Z"/>
+      <!-- flank sculpting: the deep scallop in the lower door and the light along the shoulder -->
+      <path class="scallop" fill="rgba(0,0,0,0.22)" d="M150,104 C210,99 300,99 352,104 L352,133 L150,133 Z"/>
+      <path class="refl" fill="url(#reflGrad)" d="M58,66 C160,61 320,62 452,82 L452,91 C320,74 160,72 58,76 Z"/>
+      <path class="shoulder" fill="none" stroke="rgba(255,255,255,0.13)" stroke-width="1" d="M46,64 C130,58 260,58 330,62 C380,65 420,70 452,80"/>
+      <path class="roofline" fill="none" stroke="rgba(255,255,255,0.16)" stroke-width="1" d="M104,55 C120,50 140,40 160,33 C180,28 205,27 230,29 C250,31 270,46 290,61"/>
+      <path class="crease" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1" d="M64,98 C150,90 300,90 430,98"/>
+      <path class="sill" fill="none" stroke="rgba(216,178,90,0.3)" stroke-width="1" d="M150,134 L352,134"/>
+      <!-- glasshouse: side glass, the slim fastback backlight, B-pillar, door shuts -->
+      <path class="glass" fill="url(#glassGrad)" d="M286,61 C268,48 250,34 232,33 C210,31 186,33 166,38 C150,43 137,52 129,61 Z"/>
+      <path class="backlight" fill="url(#glassGrad)" opacity="0.9" d="M163,34 C146,40 128,48 108,55 C120,55 132,54 142,50 C150,45 157,40 163,34 Z"/>
+      <path class="pillar" fill="none" stroke="rgba(8,10,18,0.9)" stroke-width="2.2" d="M202,32 C203,42 204,52 205,61"/>
+      <path class="pillar" fill="none" stroke="rgba(8,10,18,0.5)" stroke-width="1" d="M206,62 L208,135"/>
+      <path class="pillar" fill="none" stroke="rgba(8,10,18,0.5)" stroke-width="1" d="M296,64 C294,90 294,118 297,135"/>
+      <path class="glassglint" fill="none" stroke="rgba(255,255,255,0.28)" stroke-width="1" d="M240,36 C222,35 196,36 172,40"/>
+      <!-- mirror, flush door handle, the side strake behind the front wheel -->
+      <path class="mirror" fill="#1b2340" stroke="rgba(216,178,90,0.35)" stroke-width="0.8" d="M296,55 C305,49 318,51 321,57 C318,61 305,62 296,60 Z"/>
+      <rect class="handle" x="246" y="72" width="22" height="3.4" rx="1.7" fill="rgba(216,178,90,0.45)"/>
+      <path class="strake" fill="rgba(216,178,90,0.28)" stroke="rgba(216,178,90,0.45)" stroke-width="0.8" d="M334,78 L352,76 L348,92 L332,94 Z"/>
+      <!-- lamps, grille, exhaust -->
+      <path class="lamp" fill="url(#lampGrad)" d="M412,78 C430,78 450,80 462,86 C464,89 462,93 458,93 C444,88 428,86 416,86 C412,86 410,82 412,78 Z"/>
+      <path class="grille" fill="#05070c" stroke="rgba(216,178,90,0.3)" stroke-width="0.8" d="M467,97 C472,106 472,118 468,127 L462,127 C466,118 466,106 462,97 Z"/>
+      <path class="tail" fill="#c43b3b" opacity="0.7" d="M24,62 C34,60 46,60 56,61 L54,70 C44,69 34,69 25,72 Z"/>
+      <path class="tailglow" fill="#ff6b6b" opacity="0.35" d="M24,62 C34,60 46,60 56,61 L55,65 C44,64 34,64 24,66 Z"/>
+      <ellipse class="exhaust" cx="36" cy="129" rx="7" ry="3" fill="#2a2d36" stroke="rgba(216,178,90,0.3)" stroke-width="0.8"/>
+      <!-- rear wheel -->
+      <g class="wheel" style="transform-origin:117px 114px">
+        <circle cx="117" cy="114" r="33" fill="#0a0b0f" stroke="#262a33" stroke-width="1.5"/>
+        <circle cx="117" cy="114" r="27" fill="none" stroke="#15181f" stroke-width="1"/>
+        <circle cx="117" cy="114" r="24" fill="url(#rimGrad)" stroke="rgba(216,178,90,0.6)" stroke-width="1.2"/>
+        <circle cx="117" cy="114" r="16" fill="#1c1f27"/>
+        <use href="#spokes" x="117" y="114"/>
+        <circle cx="117" cy="114" r="4.6" fill="#6b7080" stroke="#2a2e38" stroke-width="1"/>
       </g>
-      <g class="wheel" style="transform-origin:372px 118px">
-        <circle cx="372" cy="118" r="30" fill="#0a0b0f" stroke="#1f232c" stroke-width="2"/>
-        <circle cx="372" cy="118" r="18" fill="#1b1e26" stroke="#5b5f6b" stroke-width="2"/>
-        <circle cx="372" cy="118" r="4" fill="#4a4e5a"/>
-        <g stroke="#5b5f6b" stroke-width="2.4" stroke-linecap="round">
-          <path d="M372,118 L372,102"/><path d="M372,118 L387,113"/><path d="M372,118 L381,131"/><path d="M372,118 L363,131"/><path d="M372,118 L357,113"/>
-        </g>
+      <path class="caliper" fill="none" stroke="#3b3f4a" stroke-width="5" stroke-linecap="round" d="M100.6,109.6 A17,17 0 0 1 109.8,98.6"/>
+      <!-- front wheel -->
+      <g class="wheel" style="transform-origin:385px 114px">
+        <circle cx="385" cy="114" r="33" fill="#0a0b0f" stroke="#262a33" stroke-width="1.5"/>
+        <circle cx="385" cy="114" r="27" fill="none" stroke="#15181f" stroke-width="1"/>
+        <circle cx="385" cy="114" r="24" fill="url(#rimGrad)" stroke="rgba(216,178,90,0.6)" stroke-width="1.2"/>
+        <circle cx="385" cy="114" r="16" fill="#1c1f27"/>
+        <use href="#spokes" x="385" y="114"/>
+        <circle cx="385" cy="114" r="4.6" fill="#6b7080" stroke="#2a2e38" stroke-width="1"/>
       </g>
+      <path class="caliper" fill="none" stroke="#3b3f4a" stroke-width="5" stroke-linecap="round" d="M368.6,109.6 A17,17 0 0 1 377.8,98.6"/>
     </symbol>
   </defs>
 </svg>
@@ -91,7 +136,7 @@
           <div class="face back"><div class="rib v"></div></div>
           <div class="face left"><div class="rib v"></div></div>
           <div class="face right"><div class="rib v"></div></div>
-          <div class="face top"><div class="rib v"></div><div class="rib h"></div></div>
+          <div class="face top"><div class="rib v"></div><div class="rib h"></div><div class="tailflat l"></div><div class="tailflat r"></div></div>
           <div class="face front"><div class="rib v"></div></div>
         </div>
         <div class="bow" id="bow">

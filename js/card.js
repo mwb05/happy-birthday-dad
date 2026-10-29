@@ -15,17 +15,9 @@ window.CARD = {
   coverDate: "October 28, 2026",
   image: "card.jpg",
 
-  message: `Dad,
+  message: `Happy Birthday Dad!!!
 
-Happy birthday.
-
-You know there's a drive coming. What you don't know is where it goes, or what's waiting along the way. That part is the present, and it starts on the next page.
-
-The short version: two days, one night, you and me, and the whole Pacific Coast Highway between home and the family in La Selva Beach. Highway 1 end to end, in the DB11, first week of December.
-
-I wanted to give you something we'd actually do together, not something that sits on a shelf. A great road, a great car and two days of your company is the best thing I could think of.
-
-Thank you for everything. I can't wait to get on the road with you.
+Thank you for everything that you do for me and for always making time to do cool stuff with me. Our trips and adventures are always a blast. I really appreciate all of the opportunities that you have given me at the business and advice for my own business. Hopefully we can make this trip up north happen in December.
 
 Love,
 Matt`

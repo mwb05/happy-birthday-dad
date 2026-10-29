@@ -61,11 +61,11 @@ window.TRIP = {
       text: "Elephant seals at Piedras Blancas, the first big cliff view at Ragged Point, then the whole Big Sur coast: sweepers, cliffs and McWay Falls dropping straight onto the sand. Highway 1 is open end to end again, for the first time in years."
     },
     {
-      key: "sierramar", day: 2, time: "12:15 PM",
-      title: "Birthday lunch at Sierra Mar",
-      place: "Post Ranch Inn, Big Sur",
-      label: "Sierra Mar",
-      text: "Floor-to-ceiling glass, twelve hundred feet above the Pacific. A gluten-free menu, bread included, at the best table on the coast. This is the birthday meal."
+      key: "nepenthe", day: 2, time: "12:30 PM",
+      title: "Birthday lunch at Nepenthe",
+      place: "Nepenthe, Big Sur",
+      label: "Nepenthe",
+      text: "The terrace eight hundred feet above the Pacific, open every day since 1949. The Ambrosia burger, a glass of something local, gluten-free choices on the menu, and the whole coast laid out below. This is the birthday meal."
     },
     {
       key: "bixby", day: 2, time: "Afternoon",
@@ -97,7 +97,7 @@ window.MAP_POINTS = {
   seals:     [184.4, 298.0],
   bigsur:    [140.4, 226.0],
   mcway:     [120.8, 198.0],
-  sierramar: [104.5, 184.0],
+  nepenthe:  [105.5, 185.5],
   bixby:     [83.2, 156.0],
   carmel:    [78.3, 120.0],
   laselva:   [88.1, 42.0]
@@ -106,12 +106,12 @@ window.MAP_POINTS = {
 /* Which side of the pin the map label sits on ("r" right, "l" left). */
 window.MAP_LABEL_SIDE = {
   start: "l", malibu: "r", sb: "r", shell: "l", tolosa: "r", morro: "r",
-  cambria: "r", seals: "r", bigsur: "r", sierramar: "r", bixby: "r", laselva: "r"
+  cambria: "r", seals: "r", bigsur: "r", nepenthe: "r", bixby: "r", laselva: "r"
 };
 
 /* Nudge a label (SVG units) when two sit close together. */
 window.MAP_LABEL_OFFSET = {
-  seals: [0, -8], cambria: [0, 8], sierramar: [2, 16], bixby: [0, -10], tolosa: [2, -4], shell: [-2, 10]
+  seals: [0, -8], cambria: [0, 8], nepenthe: [2, -5], bixby: [0, -10], tolosa: [2, -4], shell: [-2, 10]
 };
 
 /* The coastline and the road, as SVG path data (generated from real
