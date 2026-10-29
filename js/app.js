@@ -234,6 +234,29 @@
   var giftScene = $('#scene-gift'), gift = $('#gift'), stage = $('#gift-stage'), giftHint = $('#gift-hint');
   var giftOpened = false, dragging = false, startY = 0, startX = 0, pull = 0;
 
+  /* Fit the gift between the heading and the "Pull the ribbon" hint, so the bow and ribbon
+     never cross "Happy birthday, Dad." on a short screen (an iPhone with Safari's bars showing,
+     a small laptop window). At full size the gift reaches about UP px above its centre (bow
+     lifted by a pull, plus the float) and DOWN px below it. It stays centred when there is
+     room; otherwise it moves down just enough, and shrinks if it still does not fit. */
+  function fitGift() {
+    if (giftOpened || giftScene.hidden) return;
+    var UP = 238, DOWN = 160, GAP = 16;
+    var h1 = giftScene.querySelector('.top-line h1');
+    if (!h1) return;
+    var top = h1.getBoundingClientRect().bottom + GAP;
+    var bottom = giftHint.getBoundingClientRect().top - 4;
+    var H = giftScene.clientHeight;
+    var full = window.matchMedia('(min-width: 900px)').matches ? 1.35 : 1;
+    var s = clamp((bottom - top) / (UP + DOWN), 0.6, full);
+    var dy = Math.max(0, top + UP * s - H / 2);
+    giftScene.style.setProperty('--gs', s.toFixed(3));
+    giftScene.style.setProperty('--gift-dy', Math.round(dy) + 'px');
+  }
+  fitGift();
+  window.addEventListener('resize', fitGift);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitGift);
+
   function setParallax(nx, ny) {
     gift.style.setProperty('--ry', (nx * 16).toFixed(2) + 'deg');
     gift.style.setProperty('--rx', (-ny * 9).toFixed(2) + 'deg');
