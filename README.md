@@ -9,14 +9,14 @@ folder is the site.
 
 ## Where to edit the card
 
-Open . The whole message is one string called  at the top of
+Open `js/card.js`. The whole message is one string called `message` at the top of
 the file (currently Matt's text, signed "Love, Matt"). Blank lines separate paragraphs;
 single line breaks are kept (that is how "Love," and "Matt" stay on two lines). The first
-paragraph is set a little larger, like a greeting.  and  are
+paragraph is set a little larger, like a greeting. `coverTitle` and `coverDate` are
 printed on the front of the card.
 
-Optional photo cover: drop a file named  next to  and it is used
-as the cover art automatically. If there is no , the DB11 silhouette cover is
+Optional photo cover: drop a file named `card.jpg` next to `index.html` and it is used
+as the cover art automatically. If there is no `card.jpg`, the DB11 silhouette cover is
 used. Nothing else to change.
 
 ## Where to edit the trip
