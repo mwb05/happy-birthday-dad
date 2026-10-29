@@ -14,93 +14,98 @@
 </head>
 <body class="locked">
 
-<!-- The DB11, drawn once and reused: on the card, on the road, and on the map.
-     Side profile, nose to the right. Proportions from the real car (4739 mm long,
-     2805 mm wheelbase, 1279 mm tall, 20-inch wheels) at 0.0954 px per mm. -->
+<!-- The DB11, drawn once and reused: on the card, on the road, on the map and in the stop scenes.
+     Side profile, nose to the right, traced from a real side-on photograph of a DB11
+     (Wikimedia Commons, "2018 Aston Martin DB11 V8 Automatic 4.0 Side") so the long clamshell
+     bonnet, set-back cabin, low floating roof with its bright strake, the side strake behind the
+     front wheel, the swept headlamp, the ducktail and the 20-inch wheels sit where they do on the car. -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
     <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#3a4668"/>
-      <stop offset="0.28" stop-color="#1c2440"/>
-      <stop offset="0.62" stop-color="#121a30"/>
-      <stop offset="1" stop-color="#090c16"/>
+      <stop offset="0" stop-color="#3a4668"/><stop offset="0.28" stop-color="#1c2440"/><stop offset="0.62" stop-color="#121a30"/><stop offset="1" stop-color="#090c16"/>
     </linearGradient>
     <linearGradient id="glassGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#8a98b8" stop-opacity="0.8"/>
-      <stop offset="0.5" stop-color="#2c3650" stop-opacity="0.95"/>
-      <stop offset="1" stop-color="#141a2c" stop-opacity="1"/>
+      <stop offset="0" stop-color="#5d6a88"/><stop offset="0.5" stop-color="#1e2638"/><stop offset="1" stop-color="#0c101b"/>
     </linearGradient>
     <linearGradient id="reflGrad" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#ffffff" stop-opacity="0"/>
-      <stop offset="0.45" stop-color="#ffffff" stop-opacity="0.09"/>
-      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.3" stop-color="#ffffff" stop-opacity="0.12"/><stop offset="0.7" stop-color="#ffffff" stop-opacity="0.06"/><stop offset="1" stop-color="#ffffff" stop-opacity="0.1"/>
     </linearGradient>
     <radialGradient id="lampGrad" cx="80%" cy="50%" r="70%">
-      <stop offset="0" stop-color="#fffaf0"/>
-      <stop offset="0.5" stop-color="#f3dc9a" stop-opacity="0.85"/>
-      <stop offset="1" stop-color="#d8b25a" stop-opacity="0.25"/>
+      <stop offset="0" stop-color="#fffaf0"/><stop offset="0.5" stop-color="#f3dc9a" stop-opacity="0.85"/><stop offset="1" stop-color="#d8b25a" stop-opacity="0.3"/>
     </radialGradient>
     <radialGradient id="rimGrad" cx="40%" cy="38%" r="70%">
-      <stop offset="0" stop-color="#2a2f3b"/>
-      <stop offset="1" stop-color="#0e1118"/>
+      <stop offset="0" stop-color="#1d212a"/><stop offset="1" stop-color="#0a0c11"/>
     </radialGradient>
-    <!-- one Y-spoke; the rim uses ten of them -->
-    <path id="spk" d="M-1.6,-5 L-4.4,-21.6 L-1.5,-21.6 L0,-14.5 L1.5,-21.6 L4.4,-21.6 L1.6,-5 Z" fill="#59606f"/>
-    <g id="spokes">
-      <use href="#spk"/><use href="#spk" transform="rotate(36)"/><use href="#spk" transform="rotate(72)"/>
-      <use href="#spk" transform="rotate(108)"/><use href="#spk" transform="rotate(144)"/><use href="#spk" transform="rotate(180)"/>
-      <use href="#spk" transform="rotate(216)"/><use href="#spk" transform="rotate(252)"/><use href="#spk" transform="rotate(288)"/>
-      <use href="#spk" transform="rotate(324)"/>
-    </g>
-    <symbol id="db11" viewBox="0 0 480 150">
-      <g class="shadow"><ellipse cx="243" cy="146" rx="222" ry="5" fill="rgba(0,0,0,0.6)"/></g>
-      <!-- body: rear bumper, tail, deck, fastback glass, roof, windscreen, long bonnet, nose, splitter, sills with the wheel arches -->
-      <path class="body" fill="url(#bodyGrad)" stroke="rgba(216,178,90,0.38)" stroke-width="0.9" stroke-linejoin="round"
-        d="M30,124 C22,114 19,96 21,78 C22,68 24,60 30,55 C44,52 72,53 102,55 C118,50 138,40 160,33 C180,28 205,27 230,29 C250,31 270,46 292,62 C340,66 410,72 452,80 C460,81 467,86 470,94 C474,104 474,118 470,128 C468,133 464,136 452,137 L417.7,137 A40,40 0 1 0 352.3,137 L149.7,137 A40,40 0 1 0 84.3,137 L56,137 C46,137 36,132 30,124 Z"/>
-      <!-- flank sculpting: the deep scallop in the lower door and the light along the shoulder -->
-      <path class="scallop" fill="rgba(0,0,0,0.22)" d="M150,104 C210,99 300,99 352,104 L352,133 L150,133 Z"/>
-      <path class="refl" fill="url(#reflGrad)" d="M58,66 C160,61 320,62 452,82 L452,91 C320,74 160,72 58,76 Z"/>
-      <path class="shoulder" fill="none" stroke="rgba(255,255,255,0.13)" stroke-width="1" d="M46,64 C130,58 260,58 330,62 C380,65 420,70 452,80"/>
-      <path class="roofline" fill="none" stroke="rgba(255,255,255,0.16)" stroke-width="1" d="M104,55 C120,50 140,40 160,33 C180,28 205,27 230,29 C250,31 270,46 290,61"/>
-      <path class="crease" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1" d="M64,98 C150,90 300,90 430,98"/>
-      <path class="sill" fill="none" stroke="rgba(216,178,90,0.3)" stroke-width="1" d="M150,134 L352,134"/>
-      <!-- glasshouse: side glass, the slim fastback backlight, B-pillar, door shuts -->
-      <path class="glass" fill="url(#glassGrad)" d="M286,61 C268,48 250,34 232,33 C210,31 186,33 166,38 C150,43 137,52 129,61 Z"/>
-      <path class="backlight" fill="url(#glassGrad)" opacity="0.9" d="M163,34 C146,40 128,48 108,55 C120,55 132,54 142,50 C150,45 157,40 163,34 Z"/>
-      <path class="pillar" fill="none" stroke="rgba(8,10,18,0.9)" stroke-width="2.2" d="M202,32 C203,42 204,52 205,61"/>
-      <path class="pillar" fill="none" stroke="rgba(8,10,18,0.5)" stroke-width="1" d="M206,62 L208,135"/>
-      <path class="pillar" fill="none" stroke="rgba(8,10,18,0.5)" stroke-width="1" d="M296,64 C294,90 294,118 297,135"/>
-      <path class="glassglint" fill="none" stroke="rgba(255,255,255,0.28)" stroke-width="1" d="M240,36 C222,35 196,36 172,40"/>
-      <!-- mirror, flush door handle, the side strake behind the front wheel -->
-      <path class="mirror" fill="#1b2340" stroke="rgba(216,178,90,0.35)" stroke-width="0.8" d="M296,55 C305,49 318,51 321,57 C318,61 305,62 296,60 Z"/>
-      <rect class="handle" x="246" y="72" width="22" height="3.4" rx="1.7" fill="rgba(216,178,90,0.45)"/>
-      <path class="strake" fill="rgba(216,178,90,0.28)" stroke="rgba(216,178,90,0.45)" stroke-width="0.8" d="M334,78 L352,76 L348,92 L332,94 Z"/>
-      <!-- lamps, grille, exhaust -->
-      <path class="lamp" fill="url(#lampGrad)" d="M412,78 C430,78 450,80 462,86 C464,89 462,93 458,93 C444,88 428,86 416,86 C412,86 410,82 412,78 Z"/>
-      <path class="grille" fill="#05070c" stroke="rgba(216,178,90,0.3)" stroke-width="0.8" d="M467,97 C472,106 472,118 468,127 L462,127 C466,118 466,106 462,97 Z"/>
-      <path class="tail" fill="#c43b3b" opacity="0.7" d="M24,62 C34,60 46,60 56,61 L54,70 C44,69 34,69 25,72 Z"/>
-      <path class="tailglow" fill="#ff6b6b" opacity="0.35" d="M24,62 C34,60 46,60 56,61 L55,65 C44,64 34,64 24,66 Z"/>
-      <ellipse class="exhaust" cx="36" cy="129" rx="7" ry="3" fill="#2a2d36" stroke="rgba(216,178,90,0.3)" stroke-width="0.8"/>
-      <!-- rear wheel -->
-      <g class="wheel" style="transform-origin:117px 114px">
-        <circle cx="117" cy="114" r="33" fill="#0a0b0f" stroke="#262a33" stroke-width="1.5"/>
-        <circle cx="117" cy="114" r="27" fill="none" stroke="#15181f" stroke-width="1"/>
-        <circle cx="117" cy="114" r="24" fill="url(#rimGrad)" stroke="rgba(216,178,90,0.6)" stroke-width="1.2"/>
-        <circle cx="117" cy="114" r="16" fill="#1c1f27"/>
-        <use href="#spokes" x="117" y="114"/>
-        <circle cx="117" cy="114" r="4.6" fill="#6b7080" stroke="#2a2e38" stroke-width="1"/>
+    <path id="spk" d="M-3.4,-13 L-2.4,-76 L2.4,-76 L3.4,-13 Z" fill="#aeb4c0"/>
+    <g id="spk2"><use href="#spk" transform="rotate(-7)"/><use href="#spk" transform="rotate(7)"/></g>
+    <g id="spokes"><use href="#spk2"/><use href="#spk2" transform="rotate(72)"/><use href="#spk2" transform="rotate(144)"/><use href="#spk2" transform="rotate(216)"/><use href="#spk2" transform="rotate(288)"/></g>
+  </defs>
+  <defs>
+    <symbol id="db11" viewBox="20 44 1240 388">
+      <ellipse class="shadow" cx="640" cy="425" rx="610" ry="9" fill="rgba(0,0,0,0.55)"/>
+      <!-- body: rear arch, tail, ducktail deck, fastback, roof, windscreen, the long clamshell bonnet, nose, splitter, front arch, sill -->
+      <path class="body" fill="url(#bodyGrad)" stroke="rgba(216,178,90,0.4)" stroke-width="2" stroke-linejoin="round"
+        d="M120,347 L95,342 C70,336 52,318 46,296 C40,275 37,250 39,225 C40,200 42,182 47,172 C52,165 60,160 75,156 C110,148 150,140 185,130 C240,112 300,92 370,78 C440,66 520,58 590,60 C650,62 690,72 730,90 C770,108 815,132 850,146 C900,148 990,153 1080,166 C1150,177 1200,195 1228,215 C1240,224 1245,236 1243,250 C1241,275 1236,300 1238,325 L1245,343 C1240,354 1210,361 1160,364 L1157,348 A118,118 0 1 0 925,358 L922,368 L352,368 L352,361 A120,120 0 1 0 120,347 Z"/>
+      <!-- light along the haunch and the shoulder, the deep scallop low in the door -->
+      <path class="refl" fill="url(#reflGrad)" d="M60,172 C150,150 300,150 437,163 L840,160 C950,166 1050,180 1112,201 C1040,193 940,181 840,175 L437,178 C300,170 160,172 52,190 Z"/>
+      <path class="scallop" fill="rgba(0,0,0,0.3)" d="M352,286 C470,300 620,318 835,333 L922,342 L922,368 L352,368 Z"/>
+      <path fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="1.6" d="M352,286 C470,300 620,318 835,333 L918,341"/>
+      <path class="shoulder" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.8" d="M52,170 C130,156 260,152 300,152 M850,163 C950,170 1050,185 1110,200"/>
+      <!-- the floating roof: gloss-black panel above the bright roof strake -->
+      <path class="roof" fill="#06080e" d="M185,130 C240,112 300,92 370,78 C440,66 520,58 590,60 C650,62 690,72 730,90 L736,97 C700,80 660,71 600,71 C520,71 440,80 380,92 C320,105 250,122 172,139 Z"/>
+      <path class="roofglint" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="1.6" d="M300,95 C400,72 520,60 610,62"/>
+      <!-- glass: the pointed rear quarter light, the door glass, the steep windscreen seen edge-on -->
+      <path class="glass" fill="url(#glassGrad)" d="M300,127 C330,111 372,97 421,90 L436,157 C398,151 343,141 300,127 Z"/>
+      <path class="glass" fill="url(#glassGrad)" d="M431,89 C500,77 590,72 650,74 C690,77 716,88 738,103 C762,120 786,139 806,156 L442,158 Z"/>
+      <path class="screen" fill="#0b0f1a" d="M736,97 C770,112 815,134 850,146 L806,156 C786,139 762,120 738,103 Z"/>
+      <path class="glassglint" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.6" d="M470,86 C540,78 600,76 650,79"/>
+      <!-- bright roof strake, A-pillar to C-pillar, the DB11's signature line -->
+      <path class="strake-roof" fill="none" stroke="#c9cdd6" stroke-width="4.5" stroke-linecap="round" d="M174,138 C250,121 320,104 380,92 C440,80 520,71 600,71 C660,71 700,80 736,97"/>
+      <path fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.2" d="M200,131 C270,115 330,101 380,90"/>
+      <!-- beltline -->
+      <path class="belt" fill="none" stroke="rgba(201,205,214,0.55)" stroke-width="1.8" d="M300,127 C343,141 398,152 437,158 L806,157 L850,149"/>
+      <!-- door shuts, flush handle, fuel flap -->
+      <path class="shut" fill="none" stroke="rgba(0,0,0,0.6)" stroke-width="1.6" d="M434,160 C428,215 438,282 497,322 M840,158 C837,220 834,280 831,333"/>
+      <rect class="handle" x="469" y="196" width="46" height="8" rx="4" fill="none" stroke="rgba(201,205,214,0.7)" stroke-width="1.6"/>
+      <ellipse cx="182" cy="152" rx="20" ry="5.5" fill="none" stroke="rgba(0,0,0,0.45)" stroke-width="1.4"/>
+      <!-- mirror -->
+      <path class="mirror" fill="url(#bodyGrad)" stroke="rgba(216,178,90,0.45)" stroke-width="1.6" d="M666,132 C668,122 690,118 718,120 C735,122 745,130 744,139 C738,146 718,150 690,150 C674,150 664,142 666,132 Z"/>
+      <path fill="none" stroke="#06080e" stroke-width="5" stroke-linecap="round" d="M706,149 L716,158"/>
+      <!-- side strake with the curlicue vent behind the front wheel -->
+      <path class="strake" fill="#04060b" stroke="rgba(201,205,214,0.55)" stroke-width="1.4" d="M843,207 C890,205 950,206 998,214 C950,219 890,221 846,221 C842,216 841,211 843,207 Z"/>
+      <!-- lamps, grille, splitter, tail light, diffuser -->
+      <path class="lamp" fill="url(#lampGrad)" stroke="rgba(0,0,0,0.5)" stroke-width="1.2" d="M1110,199 C1140,203 1185,214 1212,228 C1224,235 1229,242 1226,248 C1215,250 1195,242 1170,232 C1150,224 1128,212 1110,199 Z"/>
+      <path fill="#d98a3a" opacity="0.85" d="M1206,236 C1214,240 1222,244 1226,248 C1218,249 1210,246 1203,242 Z"/>
+      <path class="grille" fill="#04060b" stroke="rgba(216,178,90,0.35)" stroke-width="1.2" d="M1234,262 C1240,280 1241,304 1237,322 L1229,320 C1232,302 1232,282 1228,265 Z"/>
+      <path class="splitter" fill="#04060b" d="M1160,356 L1243,338 L1246,346 C1238,356 1200,364 1160,367 Z"/>
+      <path class="sill" fill="#04060b" d="M352,355 L922,355 L922,368 L352,368 Z"/>
+      <path class="tail" fill="#b8282e" d="M47,172 C70,169 95,173 117,180 C118,188 112,195 101,198 C82,197 61,192 47,186 Z"/>
+      <path class="tailglow" fill="#ff5a5a" opacity="0.8" d="M48,172 C72,169 96,173 117,180 L116,184 C95,178 72,175 48,177 Z"/>
+      <path class="diffuser" fill="#04060b" d="M46,296 C52,318 70,336 95,342 L122,347 L126,336 C98,330 72,318 57,295 Z"/>
+      <!-- rear wheel: 20-inch twin-spoke, disc and caliper behind it -->
+      <circle cx="238" cy="324" r="100" fill="#07080c"/>
+      <circle cx="238" cy="324" r="93" fill="none" stroke="#1a1d24" stroke-width="2"/>
+      <circle cx="238" cy="324" r="78" fill="url(#rimGrad)"/>
+      <circle cx="238" cy="324" r="57" fill="none" stroke="#2f343e" stroke-width="12"/>
+      <path class="caliper" fill="none" stroke="#6b707c" stroke-width="15" stroke-linecap="round" d="M189,298 A55,55 0 0 1 222,271"/>
+      <g class="wheel" style="transform-origin:238px 324px">
+        <use href="#spokes" x="238" y="324"/>
+        <circle cx="238" cy="324" r="77" fill="none" stroke="#b5bbc6" stroke-width="3"/>
+        <circle cx="238" cy="324" r="14" fill="#2a2e37" stroke="#b5bbc6" stroke-width="2.5"/>
+        <circle cx="238" cy="324" r="5" fill="#d8b25a"/>
       </g>
-      <path class="caliper" fill="none" stroke="#3b3f4a" stroke-width="5" stroke-linecap="round" d="M100.6,109.6 A17,17 0 0 1 109.8,98.6"/>
-      <!-- front wheel -->
-      <g class="wheel" style="transform-origin:385px 114px">
-        <circle cx="385" cy="114" r="33" fill="#0a0b0f" stroke="#262a33" stroke-width="1.5"/>
-        <circle cx="385" cy="114" r="27" fill="none" stroke="#15181f" stroke-width="1"/>
-        <circle cx="385" cy="114" r="24" fill="url(#rimGrad)" stroke="rgba(216,178,90,0.6)" stroke-width="1.2"/>
-        <circle cx="385" cy="114" r="16" fill="#1c1f27"/>
-        <use href="#spokes" x="385" y="114"/>
-        <circle cx="385" cy="114" r="4.6" fill="#6b7080" stroke="#2a2e38" stroke-width="1"/>
+      <!-- front wheel: 20-inch twin-spoke, disc and caliper behind it -->
+      <circle cx="1041" cy="326" r="100" fill="#07080c"/>
+      <circle cx="1041" cy="326" r="93" fill="none" stroke="#1a1d24" stroke-width="2"/>
+      <circle cx="1041" cy="326" r="78" fill="url(#rimGrad)"/>
+      <circle cx="1041" cy="326" r="57" fill="none" stroke="#2f343e" stroke-width="12"/>
+      <path class="caliper" fill="none" stroke="#6b707c" stroke-width="15" stroke-linecap="round" d="M992,300 A55,55 0 0 1 1025,273"/>
+      <g class="wheel" style="transform-origin:1041px 326px">
+        <use href="#spokes" x="1041" y="326"/>
+        <circle cx="1041" cy="326" r="77" fill="none" stroke="#b5bbc6" stroke-width="3"/>
+        <circle cx="1041" cy="326" r="14" fill="#2a2e37" stroke="#b5bbc6" stroke-width="2.5"/>
+        <circle cx="1041" cy="326" r="5" fill="#d8b25a"/>
       </g>
-      <path class="caliper" fill="none" stroke="#3b3f4a" stroke-width="5" stroke-linecap="round" d="M368.6,109.6 A17,17 0 0 1 377.8,98.6"/>
     </symbol>
   </defs>
 </svg>
@@ -110,7 +115,10 @@
   <svg class="off" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9l5 6M21 9l-5 6"/></svg>
 </button>
 
-<!-- ============ Scene 1: the present ============ -->
+<!-- One dot per stop of the whole journey: present, card, car, the road, the finale. -->
+<ol class="progress" id="progress" aria-hidden="true"></ol>
+
+<!-- ============ Stop 1: the present ============ -->
 <section id="scene-gift" class="scene scene-gift" aria-label="A wrapped present">
   <div class="vignette"></div>
   <div class="top-line">
@@ -153,7 +161,7 @@
   <p class="hint" id="gift-hint"><span class="arrow"></span>Pull the ribbon</p>
 </section>
 
-<!-- ============ Scene 2: the envelope and the card ============ -->
+<!-- ============ Stop 2: the envelope and the card ============ -->
 <section id="scene-card" class="scene scene-card" aria-label="A birthday card">
   <div class="vignette"></div>
   <div class="top-line" id="card-topline">
@@ -193,82 +201,105 @@
   <button id="to-reveal" class="btn fade" type="button" hidden>Now, your present</button>
 </section>
 
-<!-- ============ The reveal: the car, then the road ============ -->
-<main id="main">
-  <section id="hero" class="hero" aria-label="The present">
-    <div class="hero-text">
-      <p class="eyebrow">Your present</p>
-      <h1>A drive up the coast.</h1>
-      <p class="sub">Highway 1 from home to La Selva Beach, two days and one night, in the DB11.</p>
+<!-- ============ Stop 3: the car ============ -->
+<section id="scene-car" class="scene scene-car hero" aria-label="The present">
+  <div class="hero-text">
+    <p class="eyebrow">Your present</p>
+    <h1>A drive up the coast.</h1>
+    <p class="sub">Highway 1 from home to La Selva Beach, two days and one night, in the DB11.</p>
+  </div>
+  <div class="road-stage">
+    <div class="horizon"></div>
+    <div class="road"></div>
+    <div class="car" id="hero-car">
+      <svg viewBox="0 0 480 150" aria-hidden="true"><use href="#db11"/></svg>
+      <div class="glow"></div>
+      <div class="beam"></div>
     </div>
-    <div class="road-stage">
-      <div class="horizon"></div>
-      <div class="road"></div>
-      <div class="car" id="hero-car">
-        <svg viewBox="0 0 480 150" aria-hidden="true"><use href="#db11"/></svg>
-        <div class="glow"></div>
-        <div class="beam"></div>
-      </div>
-    </div>
-    <div class="hero-cue">
-      <p class="hint"><span class="arrow"></span>Scroll for the plan</p>
-    </div>
-  </section>
+  </div>
+  <div class="hero-cue">
+    <button id="to-map" class="btn" type="button">Start the drive</button>
+  </div>
+</section>
 
-  <section id="trip" class="trip" aria-label="The plan">
+<!-- ============ Stops 4 to 11: the road, stop by stop ============ -->
+<section id="journey" class="scene journey" aria-label="The plan, stop by stop">
+  <svg id="map" class="map" preserveAspectRatio="none" role="img" aria-label="Map of the route from Orange County to La Selva Beach along the California coast">
+    <defs>
+      <linearGradient id="ocean" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#0b1426"/>
+        <stop offset="1" stop-color="#060910"/>
+      </linearGradient>
+      <filter id="blur" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="4"/></filter>
+      <filter id="blur-s" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.6"/></filter>
+    </defs>
+    <rect class="ocean" x="-2000" y="-2000" width="5000" height="5000"/>
+    <g id="graticule"></g>
+    <path class="coastglow" id="coast-glow" d=""/>
+    <path class="land" id="land" d=""/>
+    <g id="map-labels"></g>
+    <path class="route-ghost" id="route-ghost" d=""/>
+    <path class="route-glow" id="route-glow" d=""/>
+    <path class="route" id="route" d=""/>
+    <g id="pins"></g>
+    <g class="car-marker" id="car-marker">
+      <circle class="halo" r="16"/>
+      <use href="#db11" x="-24" y="-7.5" width="48" height="15"/>
+    </g>
+  </svg>
+  <div class="map-vignette"></div>
+  <div class="compass" aria-hidden="true"><svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="26"/><path d="M30 6 L34 30 L30 54 L26 30 Z"/><path class="n" d="M30 6 L34 30 L26 30 Z"/><text x="30" y="5">N</text></svg></div>
+  <p class="drive-caption" id="drive-caption"></p>
+
+  <article class="stop-card" id="stop-card" aria-live="polite">
+    <div class="stop-scene" id="stop-scene"></div>
+    <div class="stop-body">
+      <p class="stop-meta"><span id="stop-time"></span><span id="stop-count"></span></p>
+      <h2 id="stop-title"></h2>
+      <p class="stop-place" id="stop-place"></p>
+      <p class="stop-text" id="stop-text"></p>
+    </div>
+    <div class="stop-nav">
+      <button id="stop-back" class="btn ghost" type="button" aria-label="Back to the last stop">Back</button>
+      <button id="stop-next" class="btn" type="button">Drive on</button>
+    </div>
+  </article>
+</section>
+
+<!-- ============ The last stop: happy birthday ============ -->
+<section id="finale" class="scene finale" aria-label="Happy birthday">
+  <canvas class="stars" id="stars"></canvas>
+  <div class="inner">
+    <p class="eyebrow" id="finale-when">First week of December 2026</p>
+    <h2>Happy Birthday, Dad</h2>
+    <p class="line">Two days. One car. The whole coast.</p>
+    <div class="rule"></div>
+    <p class="love">Love, Matt</p>
+    <div class="finale-actions">
+      <button id="show-plan" class="btn ghost" type="button">The whole plan</button>
+      <button id="replay-drive" class="btn ghost" type="button">Take the drive again</button>
+    </div>
+    <a class="replay" href="./">Open it again</a>
+  </div>
+</section>
+
+<!-- The whole itinerary on one page, from the finale. -->
+<section id="plan" class="plan" aria-label="The whole plan" hidden>
+  <div class="plan-inner">
     <header class="trip-head">
       <p class="eyebrow">The plan</p>
       <h2 id="trip-headline"></h2>
       <p class="intro" id="trip-intro"></p>
       <p class="when" id="trip-when"></p>
     </header>
-
-    <div class="trip-layout">
-      <div class="map-wrap" id="map-wrap">
-        <svg id="map" viewBox="0 0 820 780" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Map of the route from Orange County to La Selva Beach along the California coast">
-          <defs>
-            <linearGradient id="ocean" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#0a1222"/>
-              <stop offset="1" stop-color="#060910"/>
-            </linearGradient>
-            <filter id="blur" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="4"/></filter>
-          </defs>
-          <rect class="ocean" x="0" y="0" width="820" height="780"/>
-          <path class="coastglow" id="coast-glow" d=""/>
-          <path class="land" id="land" d=""/>
-          <text class="map-ocean-label" x="120" y="560" transform="rotate(-62 120 560)">Pacific Ocean</text>
-          <text class="map-label" x="600" y="596">Los Angeles</text>
-          <text class="map-label" x="372" y="412">San Luis Obispo</text>
-          <text class="map-label" x="118" y="104">Monterey</text>
-          <path class="route-ghost" id="route-ghost" d=""/>
-          <path class="route-glow" id="route-glow" d=""/>
-          <path class="route" id="route" d=""/>
-          <g id="pins"></g>
-          <g class="car-marker" id="car-marker">
-            <circle class="halo" r="16"/>
-            <svg x="-22" y="-7" width="44" height="14" viewBox="0 0 480 150" aria-hidden="true"><use href="#db11"/></svg>
-          </g>
-        </svg>
-      </div>
-      <ol class="stops" id="stops"></ol>
-    </div>
-  </section>
-
-  <section id="finale" class="finale" aria-label="Happy birthday">
-    <canvas class="stars" id="stars"></canvas>
-    <div class="inner">
-      <p class="eyebrow" id="finale-when">First week of December 2026</p>
-      <h2>Happy Birthday, Dad</h2>
-      <p class="line">Two days. One car. The whole coast.</p>
-      <div class="rule"></div>
-      <p class="love">Love, Matt</p>
-      <a class="replay" href="./">Open it again</a>
-    </div>
-  </section>
-</main>
+    <ol class="stops" id="stops"></ol>
+    <p class="plan-close-wrap"><button id="close-plan" class="btn ghost" type="button">Close</button></p>
+  </div>
+</section>
 
 <script src="js/card.js"></script>
 <script src="js/trip.js"></script>
+<script src="js/scenes.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

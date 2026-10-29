@@ -1,5 +1,5 @@
 /* For Dad - the whole experience, in one small script.
-   Scenes: gift -> envelope + card -> the car -> the map -> the finale.
+   Stops: gift -> envelope + card -> the car -> the road, stop by stop -> the finale.
    No libraries, no network calls, nothing recorded. */
 (function () {
   'use strict';
@@ -106,7 +106,7 @@
   // Keep the fixed overlays from rubber-banding on iOS. The card text may scroll.
   $$('.scene').forEach(function (sc) {
     sc.addEventListener('touchmove', function (e) {
-      if (!e.target.closest || !e.target.closest('.card-text')) e.preventDefault();
+      if (!e.target.closest || !e.target.closest('.card-text, .stop-body, .plan')) e.preventDefault();
     }, { passive: false });
   });
 
@@ -293,181 +293,333 @@
       requestAnimationFrame(function () { revealBtn.classList.add('show'); });
     });
   });
-  revealBtn.addEventListener('click', function () { goReveal(false); });
+  revealBtn.addEventListener('click', function () { goCar(false); });
 
-  /* ---------------- the car ---------------- */
-  var hero = $('#hero');
-  var tripStarted = false;
-  function unlock() {
-    document.body.classList.remove('locked');
-    window.scrollTo(0, 0);
+  /* Fit the message to the card: the largest type size that still fits without scrolling,
+     so the words fill the card instead of floating in the top half of it. */
+  function fitCard() {
+    var box = $('#card-message');
+    if (!box || !box.clientHeight) return;
+    var lo = 12, hi = 34;
+    box.style.fontSize = hi + 'px';
+    if (box.scrollHeight <= box.clientHeight) return;
+    for (var k = 0; k < 14; k++) {
+      var mid = (lo + hi) / 2;
+      box.style.fontSize = mid + 'px';
+      if (box.scrollHeight <= box.clientHeight) lo = mid; else hi = mid;
+    }
+    box.style.fontSize = Math.floor(lo * 10) / 10 + 'px';
   }
-  function goReveal(instant) {
+  window.addEventListener('resize', fitCard);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitCard);
+
+  /* ---------------- the journey: one dot per stop ---------------- */
+  var trip = window.TRIP || { stops: [] };
+  var MP = window.MAP_POINTS || {};
+  var majorsData = trip.stops.filter(function (s) { return !s.minor && MP[s.key]; });
+  var progress = $('#progress');
+  var chapters = ['The present', 'The card', 'The car'].concat(majorsData.map(function (s) { return s.label || s.place; })).concat(['Happy birthday']);
+  chapters.forEach(function (name) { var li = document.createElement('li'); li.title = name; progress.appendChild(li); });
+  function setProgress(n) {
+    $$('li', progress).forEach(function (li, k) { li.classList.toggle('done', k < n); li.classList.toggle('now', k === n); });
+  }
+  setProgress(0);
+
+  /* ---------------- stop 3: the car ---------------- */
+  var carScene = $('#scene-car');
+  function goCar(instant) {
     cardScene.classList.add('leave');
-    if (instant) hero.classList.add('instant');
-    hero.classList.add('drive');
+    carScene.classList.add('enter');
+    if (instant) carScene.classList.add('instant');
+    carScene.classList.add('drive');
+    setProgress(2);
     if (!instant) { Sfx.engine(); buzz([20, 60, 30]); }
     wait(T(instant ? 0 : 900)).then(function () {
       cardScene.hidden = true;
       return wait(T(instant ? 0 : 2000));
-    }).then(function () {
-      hero.classList.add('arrived');
-      unlock();
-      startTrip();
+    }).then(function () { carScene.classList.add('arrived'); });
+  }
+  $('#to-map').addEventListener('click', function () { goJourney(); });
+
+  /* ---------------- the map ---------------- */
+  var NS = 'http://www.w3.org/2000/svg';
+  var journey = $('#journey'), map = $('#map'), routeEl = $('#route'), glowEl = $('#route-glow'), ghostEl = $('#route-ghost');
+  var landEl = $('#land'), coastEl = $('#coast-glow'), marker = $('#car-marker'), stopCard = $('#stop-card'), caption = $('#drive-caption');
+  var geo = window.MAP_GEOMETRY || {};
+  // The coastline file stops at the map frame; carry the land on past it so the camera can roam.
+  var land = (geo.land || '').replace(/L18,0 .*$/, 'L18,0 L10,-1600 L2600,-1600 L2600,2600 L1150,2600 L860,850 Z');
+  landEl.setAttribute('d', land);
+  coastEl.setAttribute('d', (geo.land || '').replace(/ L18,0 .*$/, ''));
+  [routeEl, glowEl, ghostEl].forEach(function (p) { p.setAttribute('d', geo.route || ''); });
+
+  (function graticule() {
+    var g = $('#graticule'), d = '';
+    for (var x = -600; x <= 1500; x += 70) d += 'M' + x + ',-1600 L' + x + ',2600 ';
+    for (var y = -600; y <= 1500; y += 70) d += 'M-1600,' + y + ' L2600,' + y + ' ';
+    var p = document.createElementNS(NS, 'path'); p.setAttribute('d', d); g.appendChild(p);
+  })();
+
+  // Scaled items: drawn in screen pixels, re-scaled every frame so they stay the same size at any zoom.
+  var scaled = [];
+  function addLabel(text, x, y, cls, rot) {
+    var g = document.createElementNS(NS, 'g'), t = document.createElementNS(NS, 'text');
+    t.setAttribute('class', cls); t.textContent = text;
+    if (rot) t.setAttribute('transform', 'rotate(' + rot + ')');
+    g.appendChild(t); $('#map-labels').appendChild(g);
+    scaled.push({ el: g, x: x, y: y });
+  }
+  addLabel('Los Angeles', 600, 596, 'map-label');
+  addLabel('San Luis Obispo', 330, 446, 'map-label');
+  addLabel('Monterey', 112, 98, 'map-label');
+  addLabel('Pacific Ocean', 230, 660, 'map-ocean-label', -55);
+
+  var side = window.MAP_LABEL_SIDE || {}, offs = window.MAP_LABEL_OFFSET || {};
+  var pinEls = [];
+  trip.stops.forEach(function (s) {
+    var p = MP[s.key]; if (!p) return;
+    var g = document.createElementNS(NS, 'g');
+    g.setAttribute('class', 'pin' + (s.minor ? ' minor' : ''));
+    if (!s.minor) { var ring = document.createElementNS(NS, 'circle'); ring.setAttribute('class', 'ring'); ring.setAttribute('r', '7'); g.appendChild(ring); }
+    var dot = document.createElementNS(NS, 'circle'); dot.setAttribute('class', 'dot'); dot.setAttribute('r', s.minor ? '3.5' : '6'); g.appendChild(dot);
+    var tx = document.createElementNS(NS, 'text'), left = side[s.key] === 'l', off = offs[s.key] || [0, 0];
+    tx.setAttribute('x', (left ? -12 : 12) + off[0]); tx.setAttribute('y', 5 + off[1]);
+    tx.setAttribute('text-anchor', left ? 'end' : 'start');
+    tx.textContent = s.label || s.place || s.title || '';
+    g.appendChild(tx);
+    $('#pins').appendChild(g);
+    scaled.push({ el: g, x: p[0], y: p[1] });
+    pinEls.push({ el: g, key: s.key, pt: p });
+  });
+
+  // Where along the road each pin sits.
+  var L = routeEl.getTotalLength(), SAMPLES = 900, samples = [];
+  for (var si = 0; si <= SAMPLES; si++) { var sp = routeEl.getPointAtLength(L * si / SAMPLES); samples.push([sp.x, sp.y]); }
+  function lenAt(pt) {
+    var best = 0, bd = Infinity;
+    for (var k = 0; k <= SAMPLES; k++) { var dx = samples[k][0] - pt[0], dy = samples[k][1] - pt[1], d = dx * dx + dy * dy; if (d < bd) { bd = d; best = k; } }
+    return L * best / SAMPLES;
+  }
+  pinEls.forEach(function (p) { p.len = lenAt(p.pt); });
+  var STOP_ZOOM = window.MAP_ZOOM || {};
+  var majors = majorsData.map(function (s, k) {
+    var len = k === 0 ? 0 : k === majorsData.length - 1 ? L : lenAt(MP[s.key]);
+    return { s: s, len: len, pt: MP[s.key], zoom: STOP_ZOOM[s.key] || 1 };
+  });
+
+  /* ---------------- the camera ---------------- */
+  // The camera: map point (x, y) shown at screen point (ax, ay), with z map units across aw screen pixels.
+  var cam = { x: 400, y: 380, z: 900, ax: 200, ay: 400, aw: 400 }, W = 0, H = 0, view = null;
+  function measureView() {
+    W = window.innerWidth; H = window.innerHeight;
+    var top = 40;
+    if (W >= 900) view = { w: W * 0.56, cx: W * 0.32, cy: H * 0.5, base: 470, fw: W * 0.9, fh: H - top, fcx: W * 0.5, fcy: (H + top) / 2 };
+    else {
+      var ph = stopCard.offsetHeight || H * 0.5;
+      view = { w: W, cx: W / 2, cy: top + (H - ph - top) * 0.5, base: 300, fw: W, fh: H - top - 20, fcx: W / 2, fcy: (H + top) / 2 };
+    }
+  }
+  function overviewCam() {
+    var z = Math.max(700, 680 * view.fw / Math.max(1, view.fh)) * 1.08;
+    return { x: 400, y: 360, z: z, ax: view.fcx, ay: view.fcy, aw: view.fw };
+  }
+  function stopCam(m) { return { x: m.pt[0], y: m.pt[1], z: view.base * m.zoom, ax: view.cx, ay: view.cy, aw: view.w }; }
+  var currentLen = 0, lastLit = -1, pingAt = 0;
+  function render() {
+    var s = cam.z / cam.aw;
+    map.setAttribute('viewBox', (cam.x - cam.ax * s).toFixed(2) + ' ' + (cam.y - cam.ay * s).toFixed(2) + ' ' + (W * s).toFixed(2) + ' ' + (H * s).toFixed(2));
+    for (var k = 0; k < scaled.length; k++) scaled[k].el.setAttribute('transform', 'translate(' + scaled[k].x + ' ' + scaled[k].y + ') scale(' + s.toFixed(4) + ')');
+    routeEl.style.strokeWidth = (3.4 * s).toFixed(2); glowEl.style.strokeWidth = (11 * s).toFixed(2);
+    ghostEl.style.strokeWidth = (2 * s).toFixed(2); ghostEl.style.strokeDasharray = (2 * s).toFixed(2) + ' ' + (8 * s).toFixed(2);
+    landEl.style.strokeWidth = (1.2 * s).toFixed(2);
+    $('#graticule').style.strokeWidth = (0.7 * s).toFixed(2);
+    var off = L - currentLen;
+    routeEl.style.strokeDasharray = L + ' ' + L; glowEl.style.strokeDasharray = L + ' ' + L;
+    routeEl.style.strokeDashoffset = off; glowEl.style.strokeDashoffset = off;
+    var p = routeEl.getPointAtLength(currentLen), q = routeEl.getPointAtLength(Math.min(L, currentLen + 2)), q0 = routeEl.getPointAtLength(Math.max(0, currentLen - 2));
+    var ang = Math.atan2(q.y - q0.y, q.x - q0.x) * 180 / Math.PI;
+    // The car faces right in the drawing; flip it when the road heads west so it never drives backwards.
+    var west = ang > 90 || ang < -90;
+    if (west) ang = ang > 90 ? ang - 180 : ang + 180;
+    marker.setAttribute('transform', 'translate(' + p.x.toFixed(1) + ' ' + p.y.toFixed(1) + ') scale(' + s.toFixed(4) + ') rotate(' + ang.toFixed(1) + ')' + (west ? ' scale(-1,1)' : ''));
+    var lit = 0;
+    for (k = 0; k < pinEls.length; k++) {
+      var on = pinEls[k].len <= currentLen + 0.5 && (currentLen > 0 || k === 0);
+      if (on) lit++;
+      if (on !== pinEls[k].el.classList.contains('lit')) pinEls[k].el.classList.toggle('lit', on);
+    }
+    if (lit > lastLit && lastLit >= 0 && performance.now() - pingAt > 300) { Sfx.ping(); buzz(8); pingAt = performance.now(); }
+    lastLit = lit;
+  }
+  var ease = function (t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
+  // Animate camera and car together. `pull` widens the shot mid-flight, like the old travel maps.
+  function fly(toCam, toLen, ms, pull) {
+    var from = { x: cam.x, y: cam.y, z: cam.z, ax: cam.ax, ay: cam.ay, aw: cam.aw }, fromLen = currentLen;
+    ms = T(ms);
+    return new Promise(function (res) {
+      var t0 = performance.now();
+      (function step(now) {
+        var t = clamp((now - t0) / ms, 0, 1), e = ease(t);
+        currentLen = fromLen + (toLen - fromLen) * e;
+        var z = from.z + (toCam.z - from.z) * e;
+        z *= 1 + (pull || 0) * Math.sin(Math.PI * e);
+        if (toLen !== fromLen && pull) {
+          // follow the car, then settle on the stop
+          var p = routeEl.getPointAtLength(currentLen), w = Math.pow(e, 3);
+          cam.x = p.x + (toCam.x - p.x) * w; cam.y = p.y + (toCam.y - p.y) * w;
+          if (e < 0.15) { var w0 = 1 - e / 0.15; cam.x = cam.x * (1 - w0) + from.x * w0; cam.y = cam.y * (1 - w0) + from.y * w0; }
+        } else { cam.x = from.x + (toCam.x - from.x) * e; cam.y = from.y + (toCam.y - from.y) * e; }
+        cam.z = z;
+        cam.ax = from.ax + (toCam.ax - from.ax) * e; cam.ay = from.ay + (toCam.ay - from.ay) * e; cam.aw = from.aw + (toCam.aw - from.aw) * e;
+        if (pull) {
+          // the stop card is down while driving, so centre the car on the whole screen mid-flight
+          var b = Math.sin(Math.PI * e);
+          cam.ax += (view.fcx - cam.ax) * b; cam.ay += (view.fcy - cam.ay) * b; cam.aw += (view.fw - cam.aw) * b;
+        }
+        render();
+        if (t < 1) requestAnimationFrame(step); else res();
+      })(t0);
     });
   }
 
-  /* ---------------- the map and the stops ---------------- */
-  function buildTrip() {
-    var trip = window.TRIP || { stops: [] }, pts = window.MAP_POINTS || {}, side = window.MAP_LABEL_SIDE || {}, geo = window.MAP_GEOMETRY || {};
+  /* ---------------- the stop card ---------------- */
+  var idx = -1, busy = false, inJourney = false;
+  function fillCard(k) {
+    var s = majors[k].s;
+    $('#stop-time').textContent = 'Day ' + s.day + (s.time ? ' · ' + s.time : '');
+    $('#stop-count').textContent = (k + 1) + ' of ' + majors.length;
+    $('#stop-title').textContent = s.title || '';
+    $('#stop-place').textContent = s.place || '';
+    $('#stop-text').textContent = s.text || '';
+    $('#stop-scene').innerHTML = (window.SCENES || {})[s.key] || '';
+    $('#stop-back').style.visibility = k > 0 ? 'visible' : 'hidden';
+    $('#stop-next').textContent = k === majors.length - 1 ? 'One more thing' : 'Drive on';
+    $('.stop-body', stopCard).scrollTop = 0;
+  }
+  function showCard(k) {
+    fillCard(k);
+    stopCard.classList.add('show');
+    caption.classList.remove('show');
+    setProgress(3 + k);
+    Sfx.chime && k === majors.length - 1 ? Sfx.chime() : Sfx.ping();
+    buzz([10, 30, 14]);
+  }
+  function hideCard() { stopCard.classList.remove('show'); }
+
+  function goJourney(instant) {
+    if (inJourney) return;
+    inJourney = true;
+    carScene.classList.add('leave');
+    journey.classList.add('enter');
+    measureView();
+    var ov = overviewCam();
+    cam = ov; currentLen = 0; render();
+    wait(T(instant ? 0 : 900)).then(function () {
+      carScene.hidden = true;
+      if (instant) { measureView(); cam = stopCam(majors[0]); render(); idx = 0; showCard(0); return; }
+      busy = true;
+      caption.textContent = 'Day 1 · Leaving home';
+      caption.classList.add('show');
+      return wait(T(500)).then(function () { return fly(stopCam(majors[0]), 0, 2200, 0); }).then(function () { busy = false; idx = 0; showCard(0); });
+    });
+  }
+
+  function goStop(k) {
+    if (busy || k === idx || k < 0) return;
+    if (k >= majors.length) { return goFinale(); }
+    busy = true;
+    var back = k < idx, m = majors[k];
+    hideCard();
+    caption.textContent = back ? 'Back to ' + (m.s.label || m.s.place) : 'Day ' + m.s.day + ' · On to ' + (m.s.label || m.s.place);
+    caption.classList.add('show');
+    Sfx.engine && !back && Sfx.engine();
+    var dist = Math.abs(m.len - currentLen);
+    var ms = back ? 1300 : clamp(1700 + dist * 5, 2200, 4600);
+    wait(T(350)).then(function () { return fly(stopCam(m), m.len, ms, back ? 0.3 : 0.9); }).then(function () {
+      idx = k; busy = false; showCard(k);
+    });
+  }
+  $('#stop-next').addEventListener('click', function () { goStop(idx + 1); });
+  $('#stop-back').addEventListener('click', function () { goStop(idx - 1); });
+  document.addEventListener('keydown', function (e) {
+    if (!inJourney || busy || !journey.classList.contains('enter') || finale.classList.contains('enter')) return;
+    if (e.key === 'ArrowRight' || e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goStop(idx + 1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); goStop(idx - 1); }
+  });
+  window.addEventListener('resize', function () {
+    if (!inJourney) return;
+    measureView();
+    if (!busy) { cam = idx >= 0 && !finale.classList.contains('enter') ? stopCam(majors[idx]) : overviewCam(); render(); }
+  });
+
+  /* ---------------- the finale ---------------- */
+  var finale = $('#finale');
+  function goFinale() {
+    busy = true;
+    hideCard();
+    caption.textContent = 'The whole coast';
+    caption.classList.add('show');
+    fly(overviewCam(), L, 2400, 0).then(function () {
+      wait(T(700)).then(function () {
+        caption.classList.remove('show');
+        finale.classList.add('enter');
+        setProgress(chapters.length - 1);
+        Sfx.chime(); buzz([12, 40, 18, 40, 24]);
+        wait(T(300)).then(function () { finale.classList.add('in'); });
+        stars();
+        busy = false;
+      });
+    });
+  }
+  $('#replay-drive').addEventListener('click', function () {
+    finale.classList.remove('enter', 'in');
+    idx = -1; busy = true;
+    var ov = overviewCam();
+    fly(ov, 0, 1200, 0).then(function () { return fly(stopCam(majors[0]), 0, 1800, 0); }).then(function () { busy = false; idx = 0; showCard(0); });
+  });
+
+  /* ---------------- the whole plan, as a list ---------------- */
+  (function buildPlan() {
     $('#trip-headline').textContent = trip.headline || '';
     $('#trip-intro').textContent = trip.intro || '';
     $('#trip-when').textContent = trip.when || '';
     if (trip.when) $('#finale-when').textContent = trip.when;
-    $('#land').setAttribute('d', geo.land || '');
-    $('#coast-glow').setAttribute('d', (geo.land || '').replace(/L18,0.*$/, ''));
-    $('#route').setAttribute('d', geo.route || '');
-    $('#route-glow').setAttribute('d', geo.route || '');
-    $('#route-ghost').setAttribute('d', geo.route || '');
-
-    var NS = 'http://www.w3.org/2000/svg', pins = $('#pins'), list = $('#stops');
-    var majors = [], lastDay = 0, n = 0;
-    trip.stops.forEach(function (s) {
-      var p = pts[s.key]; if (!p) return;
-      var g = document.createElementNS(NS, 'g');
-      g.setAttribute('class', 'pin' + (s.minor ? ' minor' : ''));
-      g.setAttribute('transform', 'translate(' + p[0] + ' ' + p[1] + ')');
-      g.dataset.key = s.key;
-      if (!s.minor) { var ring = document.createElementNS(NS, 'circle'); ring.setAttribute('class', 'ring'); ring.setAttribute('r', '9'); g.appendChild(ring); }
-      var dot = document.createElementNS(NS, 'circle'); dot.setAttribute('class', 'dot'); dot.setAttribute('r', s.minor ? '5' : '8'); g.appendChild(dot);
-      var tx = document.createElementNS(NS, 'text');
-      var left = side[s.key] === 'l', off = (window.MAP_LABEL_OFFSET || {})[s.key] || [0, 0];
-      tx.setAttribute('x', (left ? -16 : 16) + off[0]); tx.setAttribute('y', 8 + off[1]);
-      tx.setAttribute('text-anchor', left ? 'end' : 'start');
-      tx.textContent = s.label || s.place || s.title || '';
-      g.appendChild(tx);
-      pins.appendChild(g);
-      if (s.minor) return;
-
+    var list = $('#stops'), lastDay = 0;
+    majors.forEach(function (m, n) {
+      var s = m.s;
       if (s.day !== lastDay) {
         lastDay = s.day;
         var d = document.createElement('li'); d.className = 'day'; d.textContent = 'Day ' + s.day;
         list.appendChild(d);
       }
-      n++;
       var li = document.createElement('li');
-      li.className = 'stop'; li.dataset.key = s.key;
+      li.className = 'stop seen';
       li.innerHTML = '<div class="meta"><span class="time"></span><span class="num"></span></div><h3></h3><p class="place"></p><p class="text"></p>';
       $('.time', li).textContent = 'Day ' + s.day + (s.time ? ' · ' + s.time : '');
-      $('.num', li).textContent = String(n).padStart(2, '0');
+      $('.num', li).textContent = String(n + 1).padStart(2, '0');
       $('h3', li).textContent = s.title || '';
       $('.place', li).textContent = s.place || '';
       $('.text', li).textContent = s.text || '';
       list.appendChild(li);
-      majors.push({ key: s.key, pt: p, pin: g, li: li });
     });
-    return majors;
-  }
-
-  var majors = buildTrip();
-
-  function startTrip() {
-    if (tripStarted) return;
-    tripStarted = true;
-    var route = $('#route'), glow = $('#route-glow'), marker = $('#car-marker'), mapWrap = $('#map-wrap');
-    var L = route.getTotalLength();
-    route.style.strokeDasharray = L + ' ' + L; glow.style.strokeDasharray = L + ' ' + L;
-    route.style.strokeDashoffset = L; glow.style.strokeDashoffset = L;
-
-    // Where along the road each stop sits: nearest sample point on the path.
-    var samples = [], S = 700, i;
-    for (i = 0; i <= S; i++) { var pp = route.getPointAtLength(L * i / S); samples.push([pp.x, pp.y]); }
-    majors.forEach(function (m) {
-      var best = 0, bd = Infinity;
-      for (i = 0; i <= S; i++) { var dx = samples[i][0] - m.pt[0], dy = samples[i][1] - m.pt[1], d = dx * dx + dy * dy; if (d < bd) { bd = d; best = i; } }
-      m.len = L * best / S;
-    });
-    if (majors.length) { majors[0].len = 0; majors[majors.length - 1].len = L; }
-
-    var current = 0, target = 0, lastLit = -1, activeIdx = -1, pingAt = 0;
-    var allPins = $$('.pin');
-    var pinLen = allPins.map(function (g) {
-      var key = g.dataset.key, p = (window.MAP_POINTS || {})[key], best = 0, bd = Infinity;
-      for (i = 0; i <= S; i++) { var dx = samples[i][0] - p[0], dy = samples[i][1] - p[1], d = dx * dx + dy * dy; if (d < bd) { bd = d; best = i; } }
-      return L * best / S;
-    });
-
-    function measure() {
-      var vh = window.innerHeight, wide = window.innerWidth >= 900;
-      var trigger;
-      if (wide) trigger = vh * 0.55;
-      else { var mb = Math.max(0, Math.min(vh, mapWrap.getBoundingClientRect().bottom)); trigger = mb + (vh - mb) * 0.42; }
-      var tops = majors.map(function (m) { return m.li.getBoundingClientRect().top; });
-      var idx = -1;
-      for (i = 0; i < tops.length; i++) if (tops[i] <= trigger) idx = i;
-      if (idx < 0) { target = 0; }
-      else if (idx >= majors.length - 1) { target = L; }
-      else {
-        var f = clamp((trigger - tops[idx]) / Math.max(1, tops[idx + 1] - tops[idx]), 0, 1);
-        f = f * f * (3 - 2 * f);
-        target = majors[idx].len + (majors[idx + 1].len - majors[idx].len) * f;
-      }
-      if (idx !== activeIdx) {
-        activeIdx = idx;
-        majors.forEach(function (m, k) {
-          m.li.classList.toggle('active', k === idx);
-          m.li.classList.toggle('seen', k < idx);
-        });
-      }
-    }
-
-    function tick() {
-      current += (target - current) * (reduceMotion ? 1 : 0.1);
-      if (Math.abs(target - current) < 0.3) current = target;
-      var off = L - current;
-      route.style.strokeDashoffset = off; glow.style.strokeDashoffset = off;
-      var p = route.getPointAtLength(current), q = route.getPointAtLength(Math.min(L, current + 3));
-      var ang = Math.atan2(q.y - p.y, q.x - p.x) * 180 / Math.PI;
-      // The car faces right in the drawing; flip it when the road heads west so it never drives backwards.
-      var flip = (ang > 90 || ang < -90) ? ' scale(1,-1)' : '';
-      if (flip) ang = ang > 90 ? ang - 180 : ang + 180;
-      marker.setAttribute('transform', 'translate(' + p.x.toFixed(1) + ' ' + p.y.toFixed(1) + ') rotate(' + ang.toFixed(1) + ')' + flip);
-      var litCount = 0;
-      for (var k = 0; k < allPins.length; k++) {
-        var lit = pinLen[k] <= current + 0.5 && current > 0;
-        if (lit) litCount++;
-        if (lit !== allPins[k].classList.contains('lit')) allPins[k].classList.toggle('lit', lit);
-      }
-      if (litCount > lastLit && lastLit >= 0 && performance.now() - pingAt > 350) { Sfx.ping(); buzz(8); pingAt = performance.now(); }
-      lastLit = litCount;
-      requestAnimationFrame(tick);
-    }
-    window.addEventListener('scroll', measure, { passive: true });
-    window.addEventListener('resize', measure);
-    measure();
-    requestAnimationFrame(tick);
-
-    // Finale fades in once it is on screen.
-    var finale = $('#finale');
-    if ('IntersectionObserver' in window) {
-      var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { finale.classList.add('in'); io.disconnect(); } }); }, { threshold: 0.25 });
-      io.observe(finale);
-    } else finale.classList.add('in');
-    stars();
-  }
+  })();
+  var plan = $('#plan');
+  $('#show-plan').addEventListener('click', function () { plan.hidden = false; plan.scrollTop = 0; requestAnimationFrame(function () { plan.classList.add('show'); }); });
+  $('#close-plan').addEventListener('click', function () { plan.classList.remove('show'); wait(400).then(function () { plan.hidden = true; }); });
 
   /* ---------------- a few stars over the finale ---------------- */
+  var starsOn = false;
   function stars() {
-    var c = $('#stars'); if (!c) return;
-    var ctx = c.getContext('2d'), pts = [], dpr = Math.min(window.devicePixelRatio || 1, 2), W, H;
+    var c = $('#stars'); if (!c || starsOn) return;
+    starsOn = true;
+    var ctx = c.getContext('2d'), pts = [], dpr = Math.min(window.devicePixelRatio || 1, 2), SW, SH;
     function size() {
-      W = c.clientWidth; H = c.clientHeight; c.width = W * dpr; c.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      pts = []; var n = Math.round(W * H / 9000);
-      for (var i = 0; i < n; i++) pts.push({ x: Math.random() * W, y: Math.random() * H, r: Math.random() * 1.2 + 0.2, p: Math.random() * 6.28, s: 0.4 + Math.random() * 0.8 });
+      SW = c.clientWidth; SH = c.clientHeight; c.width = SW * dpr; c.height = SH * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      pts = []; var n = Math.round(SW * SH / 9000);
+      for (var i = 0; i < n; i++) pts.push({ x: Math.random() * SW, y: Math.random() * SH, r: Math.random() * 1.2 + 0.2, p: Math.random() * 6.28, s: 0.4 + Math.random() * 0.8 });
     }
     size(); window.addEventListener('resize', size);
     (function draw(now) {
-      ctx.clearRect(0, 0, W, H);
+      ctx.clearRect(0, 0, SW, SH);
       for (var i = 0; i < pts.length; i++) {
         var p = pts[i], a = 0.25 + 0.55 * (0.5 + 0.5 * Math.sin(now / 1000 * p.s + p.p));
         ctx.globalAlpha = a; ctx.fillStyle = '#f3dc9a';
@@ -480,15 +632,26 @@
 
   /* ---------------- start ---------------- */
   renderCard();
-  var go = new URLSearchParams(window.location.search).get('go');
-  if (go === 'trip') {
-    // Straight to the plan (handy for checking the map on a phone).
+  fitCard();
+  // Deep links for checking one stop on a phone: ?go=card, ?go=car, ?go=trip, ?go=stop&n=3, ?go=finale
+  var qs = new URLSearchParams(window.location.search), go = qs.get('go');
+  function skipTo(stage) {
     giftScene.hidden = true; Fx.stop();
     cardScene.classList.add('enter');
-    goReveal(true);
-  } else if (go === 'card') {
-    giftScene.hidden = true;
-    cardScene.classList.add('enter');
+    if (stage === 'card') { setProgress(1); return; }
+    goCar(true);
+    if (stage === 'car') return;
+    cardScene.hidden = true;
+    goJourney(true);
+  }
+  if (go === 'card' || go === 'car' || go === 'trip') skipTo(go);
+  else if (go === 'stop' || go === 'finale') {
+    skipTo('trip');
+    var n = go === 'finale' ? majors.length - 1 : clamp(parseInt(qs.get('n'), 10) || 0, 0, majors.length - 1);
+    wait(50).then(function () {
+      idx = n; currentLen = majors[n].len; cam = stopCam(majors[n]); render(); showCard(n);
+      if (go === 'finale') goFinale();
+    });
   } else {
     Fx.start();
   }

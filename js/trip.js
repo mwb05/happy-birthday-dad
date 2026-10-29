@@ -109,9 +109,14 @@ window.MAP_LABEL_SIDE = {
   cambria: "r", seals: "r", bigsur: "r", nepenthe: "r", bixby: "r", laselva: "r"
 };
 
-/* Nudge a label (SVG units) when two sit close together. */
+/* Nudge a label (screen pixels) when two sit close together. */
 window.MAP_LABEL_OFFSET = {
-  seals: [0, -8], cambria: [0, 8], nepenthe: [2, -5], bixby: [0, -10], tolosa: [2, -4], shell: [-2, 10]
+  start: [0, 20], seals: [0, -5], cambria: [0, 6], nepenthe: [0, -4], bixby: [0, -5], tolosa: [0, -3], shell: [0, 6]
+};
+
+/* How close the camera comes in at each stop (1 = normal, smaller = closer). */
+window.MAP_ZOOM = {
+  start: 1.3, shell: 0.7, tolosa: 0.7, cambria: 1, bigsur: 1.1, nepenthe: 0.85, bixby: 0.85, laselva: 1.15
 };
 
 /* The coastline and the road, as SVG path data (generated from real
