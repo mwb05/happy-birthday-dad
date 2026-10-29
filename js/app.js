@@ -85,18 +85,74 @@
   };
 
   var muteBtn = $('#mute');
-  muteBtn.addEventListener('click', function (e) {
-    e.stopPropagation();
-    var m = !Sfx.muted;
+  function setMute(m) {
     Sfx.setMuted(m);
     muteBtn.classList.toggle('is-muted', m);
     muteBtn.setAttribute('aria-pressed', String(m));
     muteBtn.setAttribute('aria-label', m ? 'Unmute sound' : 'Mute sound');
+    syncMusic();
+  }
+  muteBtn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    setMute(!Sfx.muted);
   });
+
+  /* ---------------- music for the drive (js/music.js) ---------------- */
+  var Music = window.Music || null, musicBtn = $('#music-btn'), musicMenu = $('#music-menu');
+  function syncMusic() {
+    if (!Music) return;
+    $$('[data-track]').forEach(function (b) { b.setAttribute('aria-checked', String(b.getAttribute('data-track') === Music.choice)); });
+    musicBtn.classList.toggle('playing', !!Music.playing && !Sfx.muted);
+  }
+  function pickTrack(id) {
+    if (!Music) return;
+    Sfx.init(); Sfx.resume();
+    if (Sfx.ctx) Music.attach(Sfx.ctx, Sfx.master);
+    Music.choice = id;
+    if (id !== 'off' && Sfx.muted) setMute(false);
+    Music.play(id);
+    syncMusic();
+    buzz(6);
+  }
+  // Start the chosen track once the drive begins (it may already be playing if he previewed one).
+  function startMusic() {
+    if (!Music || Music.playing || Music.choice === 'off') return;
+    if (Sfx.ctx) { Music.attach(Sfx.ctx, Sfx.master); Music.play(Music.choice); syncMusic(); }
+  }
+  function openMenu(open) {
+    musicMenu.classList.toggle('show', open);
+    musicBtn.setAttribute('aria-expanded', String(open));
+  }
+  if (Music) {
+    Music.tracks.forEach(function (tr) {
+      var li = document.createElement('li'), b = document.createElement('button');
+      b.type = 'button'; b.className = 'track'; b.setAttribute('role', 'radio'); b.setAttribute('data-track', tr.id);
+      b.innerHTML = '<span class="tick"></span><span class="name"></span><span class="desc"></span>';
+      $('.name', b).textContent = tr.name; $('.desc', b).textContent = tr.desc;
+      b.addEventListener('click', function (e) { e.stopPropagation(); pickTrack(tr.id); wait(350).then(function () { openMenu(false); }); });
+      li.appendChild(b); $('#tracks').appendChild(li);
+      var chip = document.createElement('button');
+      chip.type = 'button'; chip.className = 'chip'; chip.setAttribute('role', 'radio'); chip.setAttribute('data-track', tr.id);
+      chip.textContent = tr.name;
+      chip.addEventListener('click', function (e) { e.stopPropagation(); pickTrack(tr.id); });
+      $('#music-chips').appendChild(chip);
+    });
+    musicBtn.addEventListener('click', function (e) { e.stopPropagation(); openMenu(!musicMenu.classList.contains('show')); });
+    musicMenu.addEventListener('pointerdown', function (e) { e.stopPropagation(); });
+    document.addEventListener('pointerdown', function (e) {
+      if (musicMenu.classList.contains('show') && !musicMenu.contains(e.target) && e.target !== musicBtn && !musicBtn.contains(e.target)) openMenu(false);
+    });
+    syncMusic();
+  } else {
+    musicBtn.hidden = true; $('.music-pick').hidden = true;
+  }
+
   // iOS: audio can only start inside a user gesture. The first touch anywhere arms it.
   function armAudio() {
     Sfx.init(); Sfx.resume();
+    if (Music && Sfx.ctx) Music.attach(Sfx.ctx, Sfx.master);
     muteBtn.classList.add('show');
+    musicBtn.classList.add('show');
     document.removeEventListener('pointerdown', armAudio, true);
     document.removeEventListener('touchend', armAudio, true);
   }
@@ -339,7 +395,7 @@
       return wait(T(instant ? 0 : 2000));
     }).then(function () { carScene.classList.add('arrived'); });
   }
-  $('#to-map').addEventListener('click', function () { goJourney(); });
+  $('#to-map').addEventListener('click', function () { startMusic(); goJourney(); });
 
   /* ---------------- the map ---------------- */
   var NS = 'http://www.w3.org/2000/svg';
@@ -542,6 +598,7 @@
   $('#stop-back').addEventListener('click', function () { goStop(idx - 1); });
   document.addEventListener('keydown', function (e) {
     if (!inJourney || busy || !journey.classList.contains('enter') || finale.classList.contains('enter')) return;
+    if (e.target.closest && e.target.closest('.music-menu, .music-btn, .mute')) return;
     if (e.key === 'ArrowRight' || e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goStop(idx + 1); }
     if (e.key === 'ArrowLeft') { e.preventDefault(); goStop(idx - 1); }
   });
@@ -644,6 +701,12 @@
     cardScene.hidden = true;
     goJourney(true);
   }
+  // On a deep link nothing has been tapped yet, so the drive's music starts on the first tap instead.
+  if (go && go !== 'card' && go !== 'car') document.addEventListener('pointerdown', function first() {
+    document.removeEventListener('pointerdown', first, true);
+    wait(0).then(startMusic);
+  }, true);
+  if (go) { muteBtn.classList.add('show'); musicBtn.classList.add('show'); }
   if (go === 'card' || go === 'car' || go === 'trip') skipTo(go);
   else if (go === 'stop' || go === 'finale') {
     skipTo('trip');

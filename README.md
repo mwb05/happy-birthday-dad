@@ -36,7 +36,9 @@ The animated picture at each stop is in `js/scenes.js`, one SVG per stop key.
 
 The trip facts come from Jarvis's PCH road-trip plan (job `pch-road-trip-la-selva-beach`,
 researched Oct 27, 2026), with one change on Oct 28: the Day 2 birthday lunch is Nepenthe in
-Big Sur (about $100 for two) instead of Sierra Mar at Post Ranch Inn. Nothing on the site is a booking.
+Big Sur (about $100 for two) instead of Sierra Mar at Post Ranch Inn. Since round 5 every stop in the plan's
+itinerary is on the drive (14 in all): the Lilac Patisserie coffee in Santa Barbara, Morro Rock, the Piedras
+Blancas elephant seals, Ragged Point, McWay Falls and Carmel were added between the original eight. Nothing on the site is a booking.
 
 ## Files
 
@@ -47,7 +49,8 @@ Big Sur (about $100 for two) instead of Sierra Mar at Post Ranch Inn. Nothing on
 | `js/card.js` | **The card text** (edit here) |
 | `js/trip.js` | The stops, the map pins and the coastline geometry |
 | `js/scenes.js` | The animated scene shown at each stop |
-| `js/app.js` | Interaction, animation, synthesised sound, the journey camera |
+| `js/music.js` | The four music tracks and the little synthesiser that plays them |
+| `js/app.js` | Interaction, animation, synthesised sound, the music picker, the journey camera |
 | `favicon.svg` | Icon |
 | `.nojekyll` | Tells GitHub Pages to serve the files as-is |
 
@@ -62,6 +65,16 @@ Big Sur (about $100 for two) instead of Sierra Mar at Post Ranch Inn. Nothing on
 
 Sound is synthesised in the browser (no audio files). It only starts after the first
 tap, as iPhones require, and the speaker button in the top-right mutes it.
+
+## Music
+
+There are four music tracks for the drive, plus No music: Coastal Drive (warm keys, easy groove),
+Grand Tourer (night-drive synths), Sunset Jazz (brushes, walking bass, Rhodes) and Big Sur Morning
+(slow pads and bells with the ocean). They are picked from the chips under Start the drive, or at any
+time from the music-note button under the speaker button. The chosen track starts with the drive and
+loops for the rest of the journey. Every note is played live by `js/music.js` (Web Audio), so there are
+no audio files, no licences to worry about and no network requests. `Music.choice` in that file is the
+default track; `TRACKS` holds the tempo, chords and tune of each one.
 
 ## Publishing
 

@@ -4,7 +4,7 @@
    Source: Jarvis's PCH road-trip plan (pch-road-trip-la-selva-beach),
    researched Oct 27, 2026. Facts only; nothing here is a booking.
 
-   Each stop:
+   Each stop (14 on the drive, in the order of the plan):
      key    - matches a point in MAP_POINTS below (where the pin goes)
      day    - 1 or 2 (a "Day 1" / "Day 2" divider is drawn when it changes)
      time   - short label shown on the card
@@ -29,7 +29,13 @@ window.TRIP = {
       text: "Up the 405 to Santa Monica and onto the Pacific Coast Highway through Malibu, ocean on the left. Then the 101 along the Santa Barbara coast, with a coffee stop at Lilac Patisserie, a fully gluten-free bakery on State Street."
     },
     { key: "malibu", minor: true, label: "Malibu" },
-    { key: "sb", minor: true, label: "Santa Barbara" },
+    {
+      key: "sb", day: 1, time: "10:15 AM",
+      title: "Coffee in Santa Barbara",
+      place: "Lilac Patisserie, 1017 State St",
+      label: "Santa Barbara",
+      text: "A bakery that is gluten-free from top to bottom, so nothing in the case is off-limits. Coffee and a pastry, a box of gluten-free crackers for the winery later, and back on the road by 10:50 for the Gaviota coast."
+    },
     {
       key: "shell", day: 1, time: "12:30 PM",
       title: "Lunch over the ocean",
@@ -44,7 +50,13 @@ window.TRIP = {
       label: "Tolosa",
       text: "Fifteen minutes from lunch, among the vines with the volcanic morros on the skyline. Cool-climate Pinot Noir and Chardonnay, with a warm room if the December afternoon turns cool. I'll drive."
     },
-    { key: "morro", minor: true, label: "Morro Rock" },
+    {
+      key: "morro", day: 1, time: "3:40 PM",
+      title: "Morro Rock",
+      place: "Morro Bay",
+      label: "Morro Rock",
+      text: "Right up to the base of the old volcanic rock for ten minutes, with sea otters floating in the harbor. Then straight on through Cayucos, with the sun getting low."
+    },
     {
       key: "cambria", day: 1, time: "Sunset",
       title: "Sunset at Moonstone Beach",
@@ -52,13 +64,33 @@ window.TRIP = {
       label: "Cambria",
       text: "A quick look at Morro Rock on the way, then into Cambria in time to watch the sun go down from the Moonstone Beach boardwalk. Dinner in town, and the night a short walk from the water."
     },
-    { key: "seals", minor: true, label: "Piedras Blancas" },
+    {
+      key: "seals", day: 2, time: "8:45 AM",
+      title: "The elephant seals",
+      place: "Piedras Blancas, north of San Simeon",
+      label: "Piedras Blancas",
+      text: "Early December is when the big bulls arrive and start staking out the beach. A paved lot right off Highway 1, and half an hour to watch them square off before Big Sur."
+    },
+    {
+      key: "ragged", day: 2, time: "9:30 AM",
+      title: "Ragged Point",
+      place: "The gateway to Big Sur",
+      label: "Ragged Point",
+      text: "The first big cliff view of the day, and a coffee right on the edge of it. From here north it is the grand-touring stretch: sweepers, cliffs and hardly a town."
+    },
     {
       key: "bigsur", day: 2, time: "Morning",
       title: "Big Sur in morning light",
       place: "Highway 1, Ragged Point to McWay Falls",
       label: "Big Sur",
       text: "Elephant seals at Piedras Blancas, the first big cliff view at Ragged Point, then the whole Big Sur coast: sweepers, cliffs and McWay Falls dropping straight onto the sand. Highway 1 is open end to end again, for the first time in years."
+    },
+    {
+      key: "mcway", day: 2, time: "11:30 AM",
+      title: "McWay Falls",
+      place: "Julia Pfeiffer Burns State Park",
+      label: "McWay Falls",
+      text: "The waterfall that drops straight onto the sand of its own little cove. A short walk from the lot to the overlook, then a few minutes up the road to lunch."
     },
     {
       key: "nepenthe", day: 2, time: "12:30 PM",
@@ -73,6 +105,13 @@ window.TRIP = {
       place: "Highway 1 north",
       label: "Bixby Bridge",
       text: "The classic photograph from the north-side pullout, then a walk down Ocean Avenue to Carmel Beach while the light is still good."
+    },
+    {
+      key: "carmel", day: 2, time: "3:15 PM",
+      title: "Carmel-by-the-Sea",
+      place: "Ocean Avenue to Carmel Beach",
+      label: "Carmel",
+      text: "The little town with its Christmas decorations up, a stretch of the legs on the white sand at the bottom of Ocean Avenue, and only about forty minutes left to go."
     },
     {
       key: "laselva", day: 2, time: "4:30 PM",
@@ -95,6 +134,7 @@ window.MAP_POINTS = {
   morro:     [253.0, 356.0],
   cambria:   [212.2, 316.0],
   seals:     [184.4, 298.0],
+  ragged:    [176.3, 274.0],
   bigsur:    [140.4, 226.0],
   mcway:     [120.8, 198.0],
   nepenthe:  [105.5, 185.5],
@@ -106,7 +146,7 @@ window.MAP_POINTS = {
 /* Which side of the pin the map label sits on ("r" right, "l" left). */
 window.MAP_LABEL_SIDE = {
   start: "l", malibu: "r", sb: "r", shell: "l", tolosa: "r", morro: "r",
-  cambria: "r", seals: "r", bigsur: "r", nepenthe: "r", bixby: "r", laselva: "r"
+  cambria: "r", seals: "r", ragged: "r", bigsur: "r", mcway: "l", nepenthe: "r", bixby: "r", carmel: "r", laselva: "r"
 };
 
 /* Nudge a label (screen pixels) when two sit close together. */
@@ -116,7 +156,7 @@ window.MAP_LABEL_OFFSET = {
 
 /* How close the camera comes in at each stop (1 = normal, smaller = closer). */
 window.MAP_ZOOM = {
-  start: 1.3, shell: 0.7, tolosa: 0.7, cambria: 1, bigsur: 1.1, nepenthe: 0.85, bixby: 0.85, laselva: 1.15
+  start: 1.3, sb: 1, shell: 0.7, tolosa: 0.7, morro: 0.8, cambria: 1, seals: 0.85, ragged: 0.85, bigsur: 1.1, mcway: 0.8, nepenthe: 0.85, bixby: 0.85, carmel: 0.85, laselva: 1.15
 };
 
 /* The coastline and the road, as SVG path data (generated from real
